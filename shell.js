@@ -1,42 +1,90 @@
 const fs = require('fs');
 const shell = require('shelljs');
 
-const dirName = process.argv[2];
-const fileExtensions = [
-  'less',
-  'tsx',
-  'test.tsx',
-];
+/******** Set up component name and file contents ********/
 
-const generatedCompName = name => {
-  if (name.includes('-')) {
-    const stringArr = name.split(/-|\./) 
-    for (let i = 0; i < stringArr.length; i++) {
-       stringArr[i] = `${stringArr[i].charAt(0).toUpperCase()}${stringArr[i].substr(1)}`;
-    }
-    return stringArr.join('');
+/**
+ * @param {String} name 
+ * 
+ * Transfrom my-comp -> MyComp
+ * or my-comp.dialog -> MyCompDialog
+ */
+const getComponentNameFromDirName = name => {
+  if (name.includes('-') || name.includes('.')) {
+    const stringArr = name.split(/-|\./)
+    return stringArr.map(part => `${part.charAt(0).toUpperCase()}${part.substr(1)}`).join('');
   }
+  return `${name.charAt(0).toUpperCase()}${name.substr(1)}`;
 }
+
+const dirName = process.argv[2];
+const componentName = getComponentNameFromDirName(dirName);
 
 const compFileBoilerplate =
   "import * as React from 'react';\n\n" +
-  `import * as styles from ./${dirName}.less\n\n\n` +
-  `export class ${generatedCompName(dirName)} extends React.Component <any> {\n\n
-    render() {\r\t\t\treturn ()\r\t\t}
-  }`
-  ;
+  `import * as styles from './${dirName}.less';\n\n\n` +
+  `export class ${componentName} extends React.Component<any> {
+  constructor(props) {
+    super(props);
+  }
+  
+  render() {
+    return (
+      <div></div>
+    );
+  }
+};`;
 
+const testFileBoilerplate = 
+"import * as React from 'react';\n" +
+"import { Enzyme } from '';\n\n" +
+`import { ${componentName} } from './${dirName}';\n\n` +
+`describe('${componentName}', () => {
+  let comp;
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = Enzyme.shallow(<${componentName} />);
+    comp = wrapper.instance();
+  });
+});
+
+  it('should render', () => {
+    expect(wrapper).toBeDefined();
+    expect(comp).toBeInstanceOf(${componentName});
+});`;
+
+const fileConfig = [
+  {
+    extension: 'less',
+  },
+  {
+    extension: 'tsx',
+    contents: compFileBoilerplate,
+  },
+  {
+    extension: 'test.tsx',
+    contents: testFileBoilerplate,
+  }
+];
+
+
+/******** Make folder and files, write contents ********/
+console.log('Creating files ...');
 shell.mkdir(`./${dirName}`);
 shell.cd(dirName);
 
-fileExtensions.forEach(ext => {
-  shell.touch(`${dirName}.${ext}`);
-});
+fileConfig.forEach(config => {
+  shell.touch(`${dirName}.${config.extension}`);
+  console.log(`${componentName}.${config.extension}`);
 
-fs.writeFile(`${dirName}.tsx`, compFileBoilerplate, (err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log('Done');
+  if (config.contents) {
+    fs.writeFile(`${dirName}.${config.extension}`, config.contents, (err) => {
+      if (err) {
+        console.log('Something went wrong: ', err);
+      }
+    });
   }
 });
+console.log('Done');
+
