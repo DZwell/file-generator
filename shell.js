@@ -21,9 +21,12 @@ const dirName = process.argv[2];
 const componentName = getComponentNameFromDirName(dirName);
 
 const compFileBoilerplate =
-  "import * as React from 'react';\n\n" +
-  `import * as styles from './${dirName}.less';\n\n\n` +
-  `export class ${componentName} extends React.Component<any> {
+  `import * as React from 'react';
+
+import * as styles from './${dirName}.less';
+
+
+export class ${componentName} extends React.Component<any> {
   constructor(props) {
     super(props);
   }
@@ -36,10 +39,14 @@ const compFileBoilerplate =
 };`;
 
 const testFileBoilerplate = 
-"import * as React from 'react';\n" +
-"import { Enzyme } from '';\n\n" +
-`import { ${componentName} } from './${dirName}';\n\n` +
-`describe('${componentName}', () => {
+`import * as React from 'react;'
+ 
+import { Enzyme } from '';
+
+import { ${componentName} } from './${dirName}'
+
+
+describe('${componentName}', () => {
   let comp;
   let wrapper;
 
@@ -49,9 +56,9 @@ const testFileBoilerplate =
   });
 });
 
-  it('should render', () => {
-    expect(wrapper).toBeDefined();
-    expect(comp).toBeInstanceOf(${componentName});
+it('should render', () => {
+  expect(wrapper).toBeDefined();
+  expect(comp).toBeInstanceOf(${componentName});
 });`;
 
 const fileConfig = [
