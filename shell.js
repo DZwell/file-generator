@@ -21,7 +21,7 @@ const dirName = process.argv[2];
 const componentName = getComponentNameFromDirName(dirName);
 
 const compFileBoilerplate =
-  `import * as React from 'react';
+  `import * as React from 'react;'
 
 import * as styles from './${dirName}.less';
 
@@ -38,8 +38,8 @@ export class ${componentName} extends React.Component<any> {
   }
 };`;
 
-const testFileBoilerplate = 
-`import * as React from 'react;'
+const testFileBoilerplate =
+  `import * as React from 'react;'
  
 import { Enzyme } from '';
 
@@ -54,12 +54,14 @@ describe('${componentName}', () => {
     wrapper = Enzyme.shallow(<${componentName} />);
     comp = wrapper.instance();
   });
-});
 
-it('should render', () => {
-  expect(wrapper).toBeDefined();
-  expect(comp).toBeInstanceOf(${componentName});
+  it('should render', () => {
+    expect(wrapper).toBeDefined();
+    expect(comp).toBeInstanceOf(${componentName});
+  });
 });`;
+
+const indexContents = `'./${dirName}'`;
 
 const fileConfig = [
   {
@@ -72,6 +74,10 @@ const fileConfig = [
   {
     extension: 'test.tsx',
     contents: testFileBoilerplate,
+  },
+  {
+    extension: 'js',
+    contents: indexContents,
   }
 ];
 
@@ -82,11 +88,12 @@ shell.mkdir(`./${dirName}`);
 shell.cd(dirName);
 
 fileConfig.forEach(config => {
-  shell.touch(`${dirName}.${config.extension}`);
-  console.log(`${componentName}.${config.extension}`);
+  const fileName = config.extension === 'js' ? 'index.js' : `${dirName}.${config.extension}`;
+  shell.touch(fileName);
+  console.log(fileName);
 
   if (config.contents) {
-    fs.writeFile(`${dirName}.${config.extension}`, config.contents, (err) => {
+    fs.writeFile(fileName, config.contents, (err) => {
       if (err) {
         console.log('Something went wrong: ', err);
       }
