@@ -1,4 +1,5 @@
 const fs = require('fs');
+var lineReader = require('line-reader');
 const shell = require('shelljs');
 
 /******** Set up component name and file contents ********/
@@ -18,6 +19,7 @@ const getComponentNameFromDirName = name => {
 }
 
 const dirName = process.argv[2];
+const writeToParentIndex = process.argv[3];
 const componentName = getComponentNameFromDirName(dirName);
 const writeToParentIndexJs = process.argv[3];
 
@@ -59,7 +61,7 @@ describe('${componentName}', () => {
   });
 });`;
 
-const indexContents = ` export * from'./${dirName}';`;
+const indexContents = `export * from './${dirName}';\n`;
 
 const fileConfig = [
   {
@@ -99,5 +101,37 @@ fileConfig.forEach(config => {
   }
 });
 
-console.log('Done');
+let hasWritten = false;
 
+lineReader.eachLine('../index.js', (line) => {
+
+  const dir = line.split('./')[1];
+  const formattedDir = dir.replace("';", '');
+  const charCode = formattedDir.charCodeAt(0);
+
+  // console.log(charCode);
+  // console.log('aaa', dirName.charCodeAt(0));
+
+  if (!hasWritten && charCode > dirName.charCodeAt(0)) {
+    fs.appendFile('../index.js', indexContents, (err) => {
+      if (err) {
+        console.log('Something went wrong: ', err);
+      }
+      hasWritten = true;
+    });
+  } 
+
+  fs.appendFile('../index.js', line, (err) => {
+    if (err) {
+      console.log('Something went wrong: ', err);
+    }
+  });
+});
+
+fs.readFile('../index.js', { encoding: 'utf8' }, (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+
+
+console.log('Done');
