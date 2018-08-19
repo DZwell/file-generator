@@ -19,17 +19,15 @@ const getComponentNameFromDirName = name => {
 
 const dirName = process.argv[2];
 const componentName = getComponentNameFromDirName(dirName);
+const writeToParentIndexJs = process.argv[3];
 
 const compFileBoilerplate =
-  `import * as React from 'react;'
+  `import * as React from 'react';
 
 import * as styles from './${dirName}.less';
 
 
 export class ${componentName} extends React.Component<any> {
-  constructor(props) {
-    super(props);
-  }
   
   render() {
     return (
@@ -39,11 +37,11 @@ export class ${componentName} extends React.Component<any> {
 };`;
 
 const testFileBoilerplate =
-  `import * as React from 'react;'
+  `import * as React from 'react';
  
 import { Enzyme } from '';
 
-import { ${componentName} } from './${dirName}'
+import { ${componentName} } from './${dirName}';
 
 
 describe('${componentName}', () => {
@@ -61,7 +59,7 @@ describe('${componentName}', () => {
   });
 });`;
 
-const indexContents = `'./${dirName}'`;
+const indexContents = ` export * from'./${dirName}';`;
 
 const fileConfig = [
   {
@@ -100,5 +98,6 @@ fileConfig.forEach(config => {
     });
   }
 });
+
 console.log('Done');
 
