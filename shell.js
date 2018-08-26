@@ -93,7 +93,7 @@ fileConfig.forEach(config => {
   console.log(fileName);
 
   if (config.contents) {
-    fs.writeFile(fileName, config.contents, (err) => {
+    fs.writeFileSync(fileName, config.contents, (err) => {
       if (err) {
         console.log('Something went wrong: ', err);
       }
@@ -102,36 +102,21 @@ fileConfig.forEach(config => {
 });
 
 let hasWritten = false;
+const exportedFiles = [dirName];
 
 lineReader.eachLine('../index.js', (line) => {
-
   const dir = line.split('./')[1];
   const formattedDir = dir.replace("';", '');
-  const charCode = formattedDir.charCodeAt(0);
-
-  // console.log(charCode);
-  // console.log('aaa', dirName.charCodeAt(0));
-
-  if (!hasWritten && charCode > dirName.charCodeAt(0)) {
-    fs.appendFile('../index.js', indexContents, (err) => {
-      if (err) {
-        console.log('Something went wrong: ', err);
-      }
-      hasWritten = true;
-    });
-  } 
-
-  fs.appendFile('../index.js', line, (err) => {
-    if (err) {
-      console.log('Something went wrong: ', err);
-    }
-  });
+  exportedFiles.push(formattedDir);
 });
 
-fs.readFile('../index.js', { encoding: 'utf8' }, (err, data) => {
-  if (err) throw err;
-  console.log(data);
-});
+exportedFiles.sort();
+console.log(exportedFiles.length);
+
+// fs.readFile('../index.js', { encoding: 'utf8' }, (err, data) => {
+//   if (err) throw err;
+//   console.log(data);
+// });
 
 
 console.log('Done');
