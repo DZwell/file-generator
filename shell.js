@@ -93,7 +93,7 @@ fileConfig.forEach(config => {
   console.log(fileName);
 
   if (config.contents) {
-    fs.writeFileSync(fileName, config.contents, (err) => {
+    fs.writeFile(fileName, config.contents, (err) => {
       if (err) {
         console.log('Something went wrong: ', err);
       }
@@ -101,22 +101,30 @@ fileConfig.forEach(config => {
   }
 });
 
-let hasWritten = false;
-const exportedFiles = [dirName];
+function writeToParent() {
+  let exportFilesString = '';
+  const exportedFiles = [dirName];
+  
+  lineReader.eachLine('../index.js', (line, last) => {
+    const dir = line.split('./')[1];
+    const formattedDir = dir.replace("';", '');
+    exportedFiles.push(formattedDir);
+  
+    if (last) {
+      exportedFiles.sort();
+  
+      exportedFiles.forEach(item => {
+        exportFilesString += `export * from './${item}';\n`;
+      });
+      fs.writeFile('../index.js', exportFilesString, (err) => {
+        if (err) { throw err }
+      });
+    }
+  });
+}
 
-lineReader.eachLine('../index.js', (line) => {
-  const dir = line.split('./')[1];
-  const formattedDir = dir.replace("';", '');
-  exportedFiles.push(formattedDir);
-});
-
-exportedFiles.sort();
-console.log(exportedFiles.length);
-
-// fs.readFile('../index.js', { encoding: 'utf8' }, (err, data) => {
-//   if (err) throw err;
-//   console.log(data);
-// });
-
+if (writeToParentIndex) {
+  writeToParent();
+}
 
 console.log('Done');
