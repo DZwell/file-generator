@@ -2,7 +2,11 @@ const fs = require('fs');
 var lineReader = require('line-reader');
 const shell = require('shelljs');
 
-/******** Set up component name and file contents ********/
+const {
+  compFileBoilerplate,
+  indexContents,
+  testFileBoilerplate
+} = require('./fileContents');
 
 /**
  * @param {String} name 
@@ -19,49 +23,9 @@ const getComponentNameFromDirName = name => {
 }
 
 const dirName = process.argv[2];
-const writeToParentIndex = process.argv[3];
+const shouldWriteToParentIndex = process.argv[3];
 const componentName = getComponentNameFromDirName(dirName);
-const writeToParentIndexJs = process.argv[3];
 
-const compFileBoilerplate =
-  `import * as React from 'react';
-
-import * as styles from './${dirName}.less';
-
-
-export class ${componentName} extends React.Component<any> {
-  
-  render() {
-    return (
-      <div></div>
-    );
-  }
-};`;
-
-const testFileBoilerplate =
-  `import * as React from 'react';
- 
-import { Enzyme } from '';
-
-import { ${componentName} } from './${dirName}';
-
-
-describe('${componentName}', () => {
-  let comp;
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = Enzyme.shallow(<${componentName} />);
-    comp = wrapper.instance();
-  });
-
-  it('should render', () => {
-    expect(wrapper).toBeDefined();
-    expect(comp).toBeInstanceOf(${componentName});
-  });
-});`;
-
-const indexContents = `export * from './${dirName}';\n`;
 
 const fileConfig = [
   {
@@ -69,15 +33,15 @@ const fileConfig = [
   },
   {
     extension: 'tsx',
-    contents: compFileBoilerplate,
+    contents: compFileBoilerplate(componentName, dirName),
   },
   {
     extension: 'test.tsx',
-    contents: testFileBoilerplate,
+    contents: testFileBoilerplate(componentName, dirName),
   },
   {
     extension: 'js',
-    contents: indexContents,
+    contents: indexContents(dirName),
   }
 ];
 
@@ -104,15 +68,15 @@ fileConfig.forEach(config => {
 function writeToParent() {
   let exportFilesString = '';
   const exportedFiles = [dirName];
-  
+
   lineReader.eachLine('../index.js', (line, last) => {
     const dir = line.split('./')[1];
     const formattedDir = dir.replace("';", '');
     exportedFiles.push(formattedDir);
-  
+
     if (last) {
       exportedFiles.sort();
-  
+
       exportedFiles.forEach(item => {
         exportFilesString += `export * from './${item}';\n`;
       });
@@ -123,7 +87,7 @@ function writeToParent() {
   });
 }
 
-if (writeToParentIndex) {
+if (shouldWriteToParentIndex) {
   writeToParent();
 }
 
