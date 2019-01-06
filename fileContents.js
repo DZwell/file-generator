@@ -14,6 +14,20 @@ export class ${comp} extends React.Component<any> {
 };`;
 }
 
+const sfcBoilerplate = (comp, dir) => {
+  return `import * as React from 'react';
+
+  import * as styles from './${dir}.less';
+  
+  interface ${comp}Props {
+
+  }
+
+  export const ${comp}: React.SFC<${comp}Props> = (props) => {
+    return <div></div>;
+  }`
+};
+
 const testFileBoilerplate = (comp, dir) => {
   return `import * as React from 'react';
  
@@ -43,5 +57,6 @@ const indexContents = dir => `export * from './${dir}';\n`;
 module.exports = {
   compFileBoilerplate,
   indexContents,
+  sfcBoilerplate,
   testFileBoilerplate
 };
