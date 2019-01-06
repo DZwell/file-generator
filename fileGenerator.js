@@ -4,6 +4,7 @@ const shell = require('shelljs');
 const {
   compFileBoilerplate,
   indexContents,
+  sfcBoilerplate,
   testFileBoilerplate
 } = require('./fileContents');
 
@@ -13,7 +14,8 @@ writeToParent
 } = require('./helpers');
 
 const dirName = process.argv[2];
-const shouldWriteToParentIndex = process.argv[3];
+const shouldWriteToParentIndex = process.argv.includes('-p');
+const isSFC = process.argv.includes('-sfc');
 const componentName = getComponentNameFromDirName(dirName);
 
 
@@ -23,7 +25,7 @@ const fileConfig = [
   },
   {
     extension: 'tsx',
-    contents: compFileBoilerplate(componentName, dirName),
+    contents: isSFC ? sfcBoilerplate(componentName, dirName) : compFileBoilerplate(componentName, dirName),
   },
   {
     extension: 'test.tsx',
