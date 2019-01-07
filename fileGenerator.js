@@ -14,7 +14,7 @@ writeToParent
 } = require('./helpers');
 
 const dirName = process.argv[2];
-const shouldWriteToParentIndex = process.argv.includes('-p');
+const shouldWriteToParentIndex = process.argv.includes('-parent');
 const isSFC = process.argv.includes('-sfc');
 const componentName = getComponentNameFromDirName(dirName);
 
