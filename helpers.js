@@ -1,8 +1,9 @@
+const fs = require('fs');
 const lineReader = require('line-reader');
 
 /**
- * @param {String} name 
- * 
+ * @param {String} name
+ *
  * Transfrom my-comp -> MyComp
  * or my-comp.dialog -> MyCompDialog
  */
