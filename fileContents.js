@@ -5,7 +5,7 @@ import * as styles from './${dir}.less';
 
 
 export class ${comp} extends React.Component<any> {
-  
+
   render() {
     return (
       <div></div>
@@ -17,24 +17,23 @@ export class ${comp} extends React.Component<any> {
 const sfcBoilerplate = (comp, dir) => {
   return `import * as React from 'react';
 
-  import * as styles from './${dir}.less';
-  
-  interface ${comp}Props {
+import * as styles from './${dir}.less';
 
-  }
+interface ${comp}Props {
 
-  export const ${comp}: React.SFC<${comp}Props> = (props) => {
-    return <div></div>;
-  }`
+}
+
+export const ${comp}: React.SFC<${comp}Props> = (props) => {
+  return <div></div>;
+}`
 };
 
 const testFileBoilerplate = (comp, dir) => {
   return `import * as React from 'react';
- 
+
 import { Enzyme } from '';
 
 import { ${comp} } from './${dir}';
-
 
 describe('${comp}', () => {
   let comp;
@@ -52,11 +51,32 @@ describe('${comp}', () => {
 });`;
 }
 
+const sfcTestFileBoilerplate = (comp, dir) => {
+  return `import * as React from 'react';
+
+import { Enzyme } from '';
+
+import { ${comp} } from './${dir}';
+
+describe('${comp}', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = Enzyme.shallow(<${comp} />);
+  });
+
+  it('should render', () => {
+    expect(wrapper).toBeDefined();
+  });
+});`;
+}
+
 const indexContents = dir => `export * from './${dir}';\n`;
 
 module.exports = {
   compFileBoilerplate,
   indexContents,
   sfcBoilerplate,
+  sfcTestFileBoilerplate,
   testFileBoilerplate
 };
