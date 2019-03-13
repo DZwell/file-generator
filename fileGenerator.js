@@ -5,6 +5,7 @@ const {
   compFileBoilerplate,
   indexContents,
   sfcBoilerplate,
+  sfcTestFileBoilerplate,
   testFileBoilerplate
 } = require('./fileContents');
 
@@ -29,7 +30,7 @@ const fileConfig = [
   },
   {
     extension: 'test.tsx',
-    contents: testFileBoilerplate(componentName, dirName),
+    contents: isSFC ? sfcTestFileBoilerplate(componentName, dirName) : testFileBoilerplate(componentName, dirName),
   },
   {
     extension: 'js',
