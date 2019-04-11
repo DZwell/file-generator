@@ -44,11 +44,24 @@ describe('${comp}', () => {
     comp = wrapper.instance();
   });
 
-  it('should render', () => {
-    expect(wrapper).toBeDefined();
-    expect(comp).toBeInstanceOf(${comp});
+  afterEach(() => {
   });
-});`;
+
+  describe('Rendering', () => {
+    test('Renders', () => {
+      expect(wrapper).toBeDefined();
+      expect(comp).toBeDefined();
+    });
+  });
+
+  describe('Lifecycle.', () => {
+  });
+
+  describe('Handlers.', () => {
+  });
+
+  describe('Helpers.', () => {
+  });`
 }
 
 const sfcTestFileBoilerplate = (comp, dir) => {
@@ -65,10 +78,20 @@ describe('${comp}', () => {
     wrapper = Enzyme.shallow(<${comp} />);
   });
 
-  it('should render', () => {
-    expect(wrapper).toBeDefined();
+  afterEach(() => {
   });
-});`;
+
+  describe('Rendering', () => {
+    test('Renders', () => {
+      expect(wrapper).toBeDefined();
+    });
+  });
+
+  describe('Handlers.', () => {
+  });
+
+  describe('Helpers.', () => {
+  });`
 }
 
 const indexContents = dir => `export * from './${dir}';\n`;

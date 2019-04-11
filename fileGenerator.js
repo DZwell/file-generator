@@ -15,8 +15,9 @@ writeToParent
 } = require('./helpers');
 
 const dirName = process.argv[2];
-const shouldWriteToParentIndex = process.argv.includes('-parent');
-const isSFC = process.argv.includes('-sfc');
+const shouldWriteToParentIndex = process.argv.includes('--parent');
+const isSFC = process.argv.includes('--sfc');
+const hasNoContentFlag = process.argv.includes('--no-content')
 const componentName = getComponentNameFromDirName(dirName);
 
 
@@ -49,8 +50,16 @@ fileConfig.forEach(config => {
   shell.touch(fileName);
   console.log(fileName);
 
-  if (config.contents) {
-    fs.writeFile(fileName, config.contents, (err) => {
+  if (!hasNoContentFlag) {
+    if (config.contents) {
+      fs.writeFile(fileName, config.contents, (err) => {
+        if (err) {
+          console.log('Something went wrong: ', err);
+        }
+      });
+    }
+  } else {
+    fs.writeFile('index.js', indexContents(dirName), (err) => {
       if (err) {
         console.log('Something went wrong: ', err);
       }

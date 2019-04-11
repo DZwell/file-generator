@@ -13,5 +13,6 @@ Run steps:
 3. `npm install`
 4. `node fileGenerator.js [NAME OF YOUR COMPONENT]`
   - Options:
-    - `-parent` -- Writes to the parent level `index.js`
-    - `-sfc` -- Creates a stateless functional component
+    - `--parent` -- Writes to the parent level `index.js`
+    - `--sfc` -- Creates a stateless functional component
+    - `--no-content` -- Creates empty files
